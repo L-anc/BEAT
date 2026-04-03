@@ -6,13 +6,30 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		C97925E72F7C9A13007B60A2 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = C97925E62F7C9A13007B60A2 /* MarkdownUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
 		C98049C62F790C1900CF340A /* InsSense.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = InsSense.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		C931FFF02F802EFC00BACA60 /* Exceptions for "InsSense" folder in "InsSense" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = C98049C52F790C1900CF340A /* InsSense */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
 /* Begin PBXFileSystemSynchronizedRootGroup section */
 		C98049C82F790C1900CF340A /* InsSense */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				C931FFF02F802EFC00BACA60 /* Exceptions for "InsSense" folder in "InsSense" target */,
+			);
 			path = InsSense;
 			sourceTree = "<group>";
 		};
@@ -23,6 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C97925E72F7C9A13007B60A2 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +83,7 @@
 			);
 			name = InsSense;
 			packageProductDependencies = (
+				C97925E62F7C9A13007B60A2 /* MarkdownUI */,
 			);
 			productName = InsSense;
 			productReference = C98049C62F790C1900CF340A /* InsSense.app */;
@@ -94,6 +113,9 @@
 			);
 			mainGroup = C98049BD2F790C1900CF340A;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				C97925E52F7C9A13007B60A2 /* XCRemoteSwiftPackageReference "MarkdownUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = C98049C72F790C1900CF340A /* Products */;
 			projectDirPath = "";
@@ -256,6 +278,9 @@
 				DEVELOPMENT_TEAM = KPS2QT7X9X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = InsSense/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "InsSense reads your health data to analyze activity and stress patterns for glucose prediction.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "InsSense writes health data to your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -288,6 +313,9 @@
 				DEVELOPMENT_TEAM = KPS2QT7X9X;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = InsSense/Info.plist;
+				INFOPLIST_KEY_NSHealthShareUsageDescription = "InsSense reads your health data to analyze activity and stress patterns for glucose prediction.";
+				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "InsSense writes health data to your device.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -332,6 +360,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		C97925E52F7C9A13007B60A2 /* XCRemoteSwiftPackageReference "MarkdownUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/gonzalezreal/MarkdownUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.4.1;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		C97925E62F7C9A13007B60A2 /* MarkdownUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = C97925E52F7C9A13007B60A2 /* XCRemoteSwiftPackageReference "MarkdownUI" */;
+			productName = MarkdownUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = C98049BE2F790C1900CF340A /* Project object */;
 }

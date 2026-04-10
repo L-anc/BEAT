@@ -6,11 +6,14 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct PersonalInfoView: View {
     
     @AppStorage("firstLaunch") var firstLaunch: Bool = true
-    @StateObject private var store = DemographicsStore()
+    
+    // Pull demographics data from user defaults
+    @State private var demographics = Demographics.current
 
     var body: some View {
         
@@ -27,18 +30,14 @@ struct PersonalInfoView: View {
                     
                     TextField(
                         "25",
-                        value: $store.age,
+                        value: $demographics.age,
                         format: .number.precision(.fractionLength(0))
                     )
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.trailing)
                 }
                 
-                Picker("Sex", selection: Binding(
-                    get: { store.sex },
-                    set: { store.sex = $0 }
-                )) {
-                    
+                Picker("Sex", selection: $demographics.sex) {
                     ForEach(BiologicalSex.allCases) { sex in
                         Text(sex.rawValue.capitalized)
                             .tag(sex)
@@ -51,7 +50,7 @@ struct PersonalInfoView: View {
                     
                     TextField(
                         "170",
-                        value: $store.heightCm,
+                        value: $demographics.heightCm,
                         format: .number.precision(.fractionLength(0))
                     )
                     .keyboardType(.decimalPad)
@@ -64,7 +63,7 @@ struct PersonalInfoView: View {
                     
                     TextField(
                         "70",
-                        value: $store.weightKg,
+                        value: $demographics.weightKg,
                         format: .number.precision(.fractionLength(0))
                     )
                     .keyboardType(.decimalPad)

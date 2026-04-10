@@ -7,6 +7,7 @@
 
 import HealthKit
 import Combine
+import SwiftData
 
 extension HKWorkoutActivityType {
     var name: String {
@@ -24,8 +25,16 @@ extension HKWorkoutActivityType {
 }
 
 class HealthKitManager: ObservableObject {
-    let store = HKHealthStore()
+    let store = HKHealthStore() // Read only access to Apple Health Data
     private var observerQueries: [HKObserverQuery] = []
+    private var context: ModelContext // Full access to app database
+    
+    private var packetStore: PacketStore // The packetStore abstraction
+        
+    init(context: ModelContext, packetStore: PacketStore) {
+        self.context = context
+        self.packetStore = packetStore
+    }
     
     //Stores date when health data was last synced as double of seconds since 1970
     private var lastFetchDate: Date {
@@ -265,14 +274,23 @@ class HealthKitManager: ObservableObject {
         do {
             let packet = try await buildPacket(from: from, to: to)
             
-            // Only save if at least some data arrived
+            // Only continue if at least some data arrived
             guard packet.hasData else { return }
             
+            // Update lastFetchDate
             lastFetchDate = to
+            
+            let summary = PacketSummary(from: packet)
+            
+            // Link summary to packet to enable cascade insert/delete
+            packet.summary = summary
             
             await MainActor.run {
                 // insert into SwiftData context
                 print("New packet built: \(packet.startDate) → \(packet.endDate)")
+                context.insert(packet)
+                // Trim expired packets (3 hr window) from SwiftData
+                try? packetStore.deleteExpiredPackets()
             }
         } catch {
             print("Sync failed: \(error)")

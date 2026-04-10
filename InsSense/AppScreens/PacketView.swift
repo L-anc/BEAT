@@ -9,30 +9,33 @@ import SwiftUI
 import SwiftData
 
 struct PacketView: View {
-    @Query(sort: \DataPacket.date, order: .reverse) private var packets: [DataPacket]
+    @Environment(PacketStore.self) private var store
+    @State private var summaries: [PacketSummary] = []
   
     var body: some View {
         NavigationStack {
-            List(packets) { packet in
-                NavigationLink(destination: DetailView(packet: packet)) {
-                    CardView(packet: packet)
+            List(summaries) { summary in
+                NavigationLink(destination: DetailView(packetID: summary.id)) {
+                    CardView(summary: summary)
                 }
                 .listRowSeparator(.visible, edges: .bottom)
                 .listRowSeparatorTint(.gray)
             }
             .navigationTitle("Data Packets")
+            .task {
+                summaries = (try? store.fetchSummaries()) ?? []
+            }
         }
     }
 }
 
 #Preview {
-    let config = ModelConfiguration(isStoredInMemoryOnly: true)
-    let container = try! ModelContainer(for: DataPacket.self, configurations: config)
-    
-    for packet in DataPacket.sampleData {
-        container.mainContext.insert(packet)
-    }
-    
-    return PacketView()
-        .modelContainer(container)
+    PacketView().withAppEnvironment()
 }
+
+
+//@ViewBuilder
+//@MainActor
+//func f() -> some View {
+//    // Key for debugging previews!! Put all preview code in here
+//}

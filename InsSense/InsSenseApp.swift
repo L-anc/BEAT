@@ -10,16 +10,32 @@ import SwiftData
 
 @main
 struct InsSenseApp: App {
+    @State private var container: ModelContainer
+    @State private var packetStore: PacketStore
+    @State private var healthKitManager: HealthKitManager
     
-    init(){
+    init() {
+        let container = try! ModelContainer(for: DataPacket.self, PacketSummary.self)
+        let store = PacketStore(context: container.mainContext)
+        _container = State(initialValue: container)
+        _packetStore = State(initialValue: store)
+        _healthKitManager = State(initialValue: HealthKitManager(
+            context: container.mainContext,
+            packetStore: store
+        ))
+        
         #if DEBUG
         UserDefaults.standard.removeObject(forKey: "firstLaunch")
+        UserDefaults.standard.removeObject(forKey: "HKLastFetchDate")
         #endif
     }
 
     var body: some Scene {
         WindowGroup {
             RootView()
+                .environmentObject(healthKitManager)
+                .environment(packetStore)
+                .modelContainer(container)
         }
     }
 }

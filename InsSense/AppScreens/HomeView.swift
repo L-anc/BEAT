@@ -6,72 +6,49 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct HomeView: View {
-
-//    @EnvironmentObject var demographics: DemographicsStore
-    let demographics: Demographics
-    let packets: [DataPacket]
-//    @StateObject private var packetStore = PacketStore()
+    @Environment(PacketStore.self) private var store
+    @State private var packets: [DecodedPacket] = []
+    @State private var demographics = Demographics.current
 
     var body: some View {
-
         NavigationStack {
-
             ScrollView {
-
                 VStack(alignment: .leading, spacing: 20) {
 
                     TimeSeriesChart(
-
-                        data: DataPacket.sampleData,
-
+                        data: packets.compactMap { $0.heartRateSamples }.flatMap { $0 },
                         title: "Heart Rate",
-
-                        xValue: { $0.date },
-
-                        yValue: { Double($0.avgBPM) },
-
                         yAxisLabel: "BPM"
                     )
-                    
 
                     VStack(alignment: .leading) {
-
                         Text("Recent Packets")
                             .font(.headline)
 
-                        ForEach(packets) { packet in
-
-                            NavigationLink {
-
-                                DetailView(packet: packet)
-
-                            } label: {
-
-                                HStack {
-
-                                    Text(packet.date, style: .time)
-
-                                    Spacer()
-
-                                    Text("\(Int(packet.avgBPM)) bpm")
-                                }
-                                .padding(.vertical, 4)
+                        ForEach(packets, id: \.id) { packet in
+                            HStack {
+                                Text(packet.startDate, style: .time)
+                                Spacer()
+                                Text("\(packet.heartRateSamples?.count ?? 0) HR samples")
                             }
-
+                            .padding(.vertical, 4)
                             Divider()
                         }
                     }
-                    
                 }
                 .padding()
             }
             .navigationTitle("Dashboard")
+            .task {
+                packets = (try? store.fetchPackets()) ?? []
+            }
         }
     }
 }
 
 #Preview {
-    HomeView(demographics: Demographics.sampleData,  packets: DataPacket.sampleData)
+    HomeView().withAppEnvironment()
 }

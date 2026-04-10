@@ -17,13 +17,16 @@ extension View {
         let hkManager = HealthKitManager(context: container.mainContext, packetStore: store)
         
         for packet in DataPacket.sampleData {
-                container.mainContext.insert(packet)
+            let summary = PacketSummary(from: packet)
+            packet.summary = summary
+            container.mainContext.insert(packet)
         }
         
         return self
             .modelContainer(container)
             .environment(store)
             .environmentObject(hkManager)
+            .environment(PacketStore(context: container.mainContext))
     }
 }
 #endif

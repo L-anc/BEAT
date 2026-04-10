@@ -8,32 +8,24 @@
 import SwiftUI
 import Charts
 
-struct TimeSeriesChart<DataPoint: Identifiable>: View {
-
-    let data: [DataPoint]
-
+struct TimeSeriesChart: View {
+    let data: [HKDataPoint]
     let title: String
-    let xValue: (DataPoint) -> Date
-    let yValue: (DataPoint) -> Double
     let yAxisLabel: String
 
     var body: some View {
-
         VStack(alignment: .leading, spacing: 8) {
-
             Text(title)
                 .font(.headline)
 
-            Chart(data) { point in
-
+            Chart(data, id: \.timestamp) { point in
                 LineMark(
-                    x: .value("Time", xValue(point)),
-                    y: .value(yAxisLabel, yValue(point))
+                    x: .value("Time", point.timestamp),
+                    y: .value(yAxisLabel, point.value)
                 )
-
                 PointMark(
-                    x: .value("Time", xValue(point)),
-                    y: .value(yAxisLabel, yValue(point))
+                    x: .value("Time", point.timestamp),
+                    y: .value(yAxisLabel, point.value)
                 )
             }
             .frame(height: 220)

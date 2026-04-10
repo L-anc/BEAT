@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct RootView: View {
     @AppStorage("firstLaunch")
@@ -15,14 +16,13 @@ struct RootView: View {
         Group{
             if firstLaunch {
                 WelcomeView()
-                    
             } else {
-                HomeView(demographics: Demographics.sampleData, packets: DataPacket.sampleData)
+                HomeView()
             }
         }.animation(.easeIn(duration: 1), value: firstLaunch)
     }
 }
 
 #Preview {
-    RootView()
+    RootView().withAppEnvironment()
 }

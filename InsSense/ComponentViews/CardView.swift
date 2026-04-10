@@ -5,23 +5,27 @@
 import SwiftUI
 
 struct CardView: View {
-    let packet: DataPacket
+    let summary: PacketSummary
     
     var body: some View {
         VStack(alignment: .leading) {
             HStack{
-                Label("\(packet.date.formatted(.dateTime.month().day().year()))", systemImage: "calendar")
+                Label("\(summary.endDate.formatted(.dateTime.month().day().year()))", systemImage: "calendar")
                     .accessibilityAddTraits(.isHeader)
                 Spacer()
-                Label("\(packet.date.formatted(.dateTime.hour().minute()))", systemImage: "clock")
+                Label("\(summary.endDate.formatted(.dateTime.hour().minute()))", systemImage: "clock")
                     .accessibilityAddTraits(.isHeader)
             }
             Spacer()
             HStack {
-                Label("\(packet.avgBPM)", systemImage: "heart")
+                if let avg = summary.avgBPM {
+                    Text("\(Int(avg)) bpm")
+                } else {
+                    Text("N/A")
+                }
                 Spacer()
-                Label("\(packet.status.rawValue)", systemImage: packet.status.systemImage)
-                    .accessibilityLabel("\(packet.status.rawValue)")
+                Label("\(summary.status.rawValue)", systemImage: summary.status.systemImage)
+                    .accessibilityLabel("\(summary.status.rawValue)")
             }
             .font(.callout)
         }
@@ -30,5 +34,5 @@ struct CardView: View {
 }
 
 #Preview(traits: .fixedLayout(width: 400, height: 120)) {
-    return CardView(packet: DataPacket.sampleData[0])
+    return CardView(summary: DataPacket.sampleSummaries[0])
 }

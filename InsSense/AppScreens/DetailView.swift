@@ -3,55 +3,65 @@
 // */
 
 import SwiftUI
+import SwiftData
 
 struct DetailView: View {
-    let packet: DataPacket
+    let packetID: UUID
+    @Environment(PacketStore.self) private var store
+    @State private var packet: DecodedPacket?
 
     var body: some View {
-        List {
-            Section(header: Text("Packet Info")) {
-                HStack {
-                    Label("Sample Date:", systemImage: "calendar")
-                    Spacer()
-                    Text("\(packet.date.formatted(.dateTime.month().day().year()))")
+        Group {
+            if let packet {
+                Spacer()
+                List {
+                    Section(header: Text("Packet Info")) {
+                        HStack {
+                            Label("Sample Date:", systemImage: "calendar")
+                            Spacer()
+                            Text("\(packet.endDate.formatted(.dateTime.month().day().year()))")
+                        }
+                        .accessibilityElement(children: .combine)
+                        
+                        HStack {
+                            Label("Sample Time:", systemImage: "clock")
+                            Spacer()
+                            Text("\(packet.endDate.formatted(.dateTime.hour().minute()))")
+                        }
+                        .accessibilityElement(children: .combine)
+                        
+                        HStack {
+                            Label("Average Heart Rate:", systemImage: "heart")
+                            Spacer()
+                            if let avg = packet.heartRateSamples?.mean {
+                                Text("\(Int(avg)) bpm")
+                            } else {
+                                Text("N/A")
+                            }
+                        }
+                        .accessibilityElement(children: .combine)
+                        
+                        HStack {
+                            Label("Predicted Status:", systemImage: packet.status.systemImage)
+                            Spacer()
+                            Text("\(packet.status.rawValue)")
+                        }
+                        .accessibilityElement(children: .combine)
+                    }
                 }
-                .accessibilityElement(children: .combine)
-                
-                HStack {
-                    Label("Sample Time:", systemImage: "clock")
-                    Spacer()
-                    Text("\(packet.date.formatted(.dateTime.hour().minute()))")
-                }
-                .accessibilityElement(children: .combine)
-                
-                HStack {
-                    Label("Average Heart Rate:", systemImage: "heart")
-                    Spacer()
-                    Text("\(packet.avgBPM) bpm")
-                }
-                .accessibilityElement(children: .combine)
-                
-                HStack {
-                    Label("Average Movement:", systemImage: "applewatch.radiowaves.left.and.right")
-                    Spacer()
-                    Text(String(format: "%.2f", packet.avgMotion) + " m/s")
-                }
-                .accessibilityElement(children: .combine)
-                
-                HStack {
-                    Label("Predicted Status:", systemImage: packet.status.systemImage)
-                    Spacer()
-                    Text("\(packet.status.rawValue)")
-                }
-                .accessibilityElement(children: .combine)
+                .navigationTitle(packet.id.uuidString)
+            } else {
+                ProgressView()
             }
         }
-        .navigationTitle(packet.id.uuidString)
+        .task {
+            packet = try? store.fetchPacket(id: packetID)
+        }
     }
 }
 
 #Preview {
-    NavigationStack {
-        DetailView(packet: DataPacket.sampleData[0])
+    NavigationStack{
+        DetailView(packetID: DataPacket.sampleData[0].id).withAppEnvironment()
     }
 }

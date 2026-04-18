@@ -16,37 +16,33 @@ struct DetailView: View {
                 Spacer()
                 List {
                     Section(header: Text("Packet Info")) {
-                        HStack {
-                            Label("Sample Date:", systemImage: "calendar")
-                            Spacer()
-                            Text("\(packet.endDate.formatted(.dateTime.month().day().year()))")
-                        }
-                        .accessibilityElement(children: .combine)
                         
-                        HStack {
-                            Label("Sample Time:", systemImage: "clock")
-                            Spacer()
-                            Text("\(packet.startDate.formatted(.dateTime.hour().minute())) - \(packet.endDate.formatted(.dateTime.hour().minute()))")
-                        }
-                        .accessibilityElement(children: .combine)
+                        DetailRow(labelText: "Sample Date:", systemImage: "calendar", summaryData: packet.endDate.formatted(.dateTime.month().day().year()))
                         
-                        HStack {
-                            Label("Average Heart Rate:", systemImage: "heart")
-                            Spacer()
-                            if let avg = packet.heartRateSamples?.mean {
-                                Text("\(Int(avg)) bpm")
-                            } else {
-                                Text("N/A")
-                            }
-                        }
-                        .accessibilityElement(children: .combine)
+                        DetailRow(labelText: "Sample Time:", systemImage: "clock", summaryData: "\(packet.startDate.formatted(.dateTime.hour().minute())) - \(packet.endDate.formatted(.dateTime.hour().minute()))")
                         
-                        HStack {
-                            Label("Predicted Status:", systemImage: packet.status.systemImage)
-                            Spacer()
-                            Text("\(packet.status.rawValue)")
-                        }
-                        .accessibilityElement(children: .combine)
+                        DetailRow(labelText: "Predicted Status:", systemImage: packet.status.systemImage, summaryData: packet.status.rawValue)
+                        
+                        DetailRow(labelText: "Heart Rate:", systemImage: "heart", summaryData: packet.heartRateSamples, operation: .Mean, unit: "bpm")
+                        
+                        DetailRow(labelText: "Heart Rate Variation:", systemImage: "heart", summaryData: packet.hrvSamples, operation: .Mean, unit: "ms")
+                        
+                        DetailRow(labelText: "Active Energy:", systemImage: "flame", summaryData: packet.activeEnergySamples, operation: .Sum, unit: "kCal")
+                        
+                        // Double check all units below this line
+                        DetailRow(labelText: "Exercise Time:", systemImage: "figure.run", summaryData: packet.exerciseTimeSamples, operation: .Sum, unit: "s")
+                        
+                        DetailRow(labelText: "Body Temperature", systemImage: "thermometer.medium", summaryData: packet.bodyTemperatureSamples, operation: .Mean, unit: "F")
+                        
+                        DetailRow(labelText: "Wrist Temperature", systemImage: "thermometer.medium", summaryData: packet.wristTemperatureSamples, operation: .Mean, unit: "F")
+                        
+                        DetailRow(labelText: "Respiratory Rate", systemImage: "lungs", summaryData: packet.respiratoryRateSamples, operation: .Mean, unit: "ml")
+                        
+                        // Need to add new detailRow and DataPointList for workoutDataPoint and SleepDataPoint
+                        
+                        DetailRow(labelText: "Blood Glucose", systemImage: "fork.knife", summaryData: packet.bloodGlucoseSamples, operation: .Sum, unit: "ml")
+                        
+                        DetailRow(labelText: "Insulin", systemImage: "syringe", summaryData: packet.insulinSamples, operation: .Sum, unit: "ml")
                     }
                 }
                 .navigationTitle(packet.id.uuidString)

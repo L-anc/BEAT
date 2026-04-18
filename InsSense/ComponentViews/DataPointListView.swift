@@ -9,7 +9,7 @@ import SwiftUI
 
 struct DataPointListView: View {
     let title: String
-    let sysImg: String
+    let systemImage: String
     let unit: String
     let dataPoints: [HKDataPoint]
 
@@ -21,29 +21,28 @@ struct DataPointListView: View {
     }()
 
     var body: some View {
-        List(dataPoints, id: \.timestamp) { point in
-            HStack {
-                Label("\(Int(point.value))", systemImage: sysImg)
-                Spacer()
-                Text("\(point.timestamp.formatted(.dateTime.hour().minute()))")
-                    .foregroundColor(.secondary)
+        if dataPoints.isEmpty {
+            ContentUnavailableView("No Data", systemImage: "waveform.slash")
+        } else {
+            List(dataPoints, id: \.timestamp) { point in
+                HStack {
+                    Label("\(Int(point.value))", systemImage: systemImage)
+                    Spacer()
+                    Text("\(point.timestamp.formatted(.dateTime.hour().minute()))")
+                        .foregroundColor(.secondary)
+                }
+                .listRowBackground(Color.gray.opacity(0.2))
             }
-            .listRowBackground(Color.gray.opacity(0.2))
-        }
-        .navigationTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
-        .overlay {
-            if dataPoints.isEmpty {
-                ContentUnavailableView("No Data", systemImage: "waveform.slash")
-            }
+            .navigationTitle(title)
+            .navigationBarTitleDisplayMode(.inline)
         }
     }
 }
 
 #Preview {
     if let hrSamples = DataPacket.sampleDecodedPacket.heartRateSamples {
-        DataPointListView(title: "Heart Rate Samples", sysImg: "heart", unit: "bpm", dataPoints: hrSamples)
+        DataPointListView(title: "Heart Rate Samples", systemImage: "heart", unit: "bpm", dataPoints: hrSamples)
     }else {
-        DataPointListView(title: "Heart Rate Samples", sysImg: "heart", unit: "bpm", dataPoints: [])
+        DataPointListView(title: "Heart Rate Samples", systemImage: "heart", unit: "bpm", dataPoints: [])
     }
 }

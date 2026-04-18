@@ -16,4 +16,9 @@ extension Array where Element == HKDataPoint {
         guard !isEmpty else { return nil }
         return map { $0.value }.reduce(0, +) / Double(count)
     }
+    
+    var sum: Double? {
+        guard !isEmpty else { return nil }
+        return map { $0.value }.reduce(0, +)
+    }
 }

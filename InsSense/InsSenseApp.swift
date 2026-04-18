@@ -36,6 +36,15 @@ struct InsSenseApp: App {
                 .environmentObject(healthKitManager)
                 .environment(packetStore)
                 .modelContainer(container)
+                .task {
+                    try? await healthKitManager.requestAuthorization()
+                    healthKitManager.startObserving()
+                    
+                    #if DEBUG
+                    print("-----------------------------")
+                    print("Starting debug run at: \(Date.now)")
+                    #endif
+                }
         }
     }
 }

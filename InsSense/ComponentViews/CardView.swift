@@ -19,9 +19,9 @@ struct CardView: View {
             Spacer()
             HStack {
                 if let avg = summary.avgBPM {
-                    Text("\(Int(avg)) bpm")
+                    Label("\(Int(avg)) bpm", systemImage: "heart")
                 } else {
-                    Text("N/A")
+                    Label("N/A", systemImage: "heart")
                 }
                 Spacer()
                 Label("\(summary.status.rawValue)", systemImage: summary.status.systemImage)

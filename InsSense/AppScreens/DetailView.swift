@@ -26,7 +26,7 @@ struct DetailView: View {
                         HStack {
                             Label("Sample Time:", systemImage: "clock")
                             Spacer()
-                            Text("\(packet.endDate.formatted(.dateTime.hour().minute()))")
+                            Text("\(packet.startDate.formatted(.dateTime.hour().minute())) - \(packet.endDate.formatted(.dateTime.hour().minute()))")
                         }
                         .accessibilityElement(children: .combine)
                         

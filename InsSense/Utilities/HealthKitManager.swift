@@ -48,7 +48,7 @@ class HealthKitManager: ObservableObject {
             }
         }
     
-    let readTypes: Set<HKObjectType> = [
+    let readTypes: Set<HKSampleType> = [
         // Body Metrics
         HKObjectType.quantityType(forIdentifier: .bodyMass)!,
         HKObjectType.quantityType(forIdentifier: .height)!,
@@ -76,9 +76,30 @@ class HealthKitManager: ObservableObject {
     ]
     
     func requestAuthorization() async throws {
-        guard HKHealthStore.isHealthDataAvailable() else { return }
-        try await store.requestAuthorization(toShare: [], read: readTypes)
+        do {
+            // Check that Health data is available on the device.
+            if HKHealthStore.isHealthDataAvailable() {
+                
+                // Asynchronously request authorization to read the data.
+                try await store.requestAuthorization(toShare: [], read: readTypes)
+            }
+        } catch {
+            
+            // Typically, authorization requests only fail if you haven't set the
+            // usage and share descriptions in your app's Info.plist, or if
+            // Health data isn't available on the current device.
+            fatalError("*** An unexpected error occurred while requesting authorization: \(error.localizedDescription) ***")
+        }
         try await enableBackgroundDelivery()
+        print("HealthKit authorization complete")
+        
+        #if DEBUG
+        for type in readTypes {
+            let status = store.authorizationStatus(for: type)
+            print("\(type): \(status.rawValue)")
+            // 0 = not determined, 1 = denied, 2 = authorized
+        }
+        #endif
     }
     
     //MARK: - Enables Running App in the Background
@@ -267,18 +288,37 @@ class HealthKitManager: ObservableObject {
     
     // MARK: - Sync Handling
     
+    #if DEBUG
+    func forceSyncNow() async {
+        await handleSync()
+    }
+    #endif
+    
     private func handleSync() async {
         let from = lastFetchDate
+        #if DEBUG
+        print("========================================")
+        print("fetching...")
+        print("last fetch date: \(lastFetchDate)")
+        #endif
         let to = Date.now
         
         do {
+            print(Date.now)
+            
             let packet = try await buildPacket(from: from, to: to)
             
             // Only continue if at least some data arrived
-            guard packet.hasData else { return }
+            guard packet.hasData else {
+                print("Packet has no data")
+                return
+            }
             
             // Update lastFetchDate
             lastFetchDate = to
+            #if DEBUG
+            print("new last fetch date: \(lastFetchDate)")
+            #endif
             
             let summary = PacketSummary(from: packet)
             

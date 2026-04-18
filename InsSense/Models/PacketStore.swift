@@ -10,7 +10,8 @@ import SwiftData
 
 // Oldest packet stored locally
 // Should be equivalent to model context window
-let StorageTime = Double(-3 * 3600)
+//let StorageTime = Double(-3 * 3600)
+let StorageTime = Double(-3.2*3600)
 
 @Observable
 class PacketStore {

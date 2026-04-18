@@ -28,7 +28,7 @@ struct HomeView: View {
                         Text("Recent Packets")
                             .font(.headline)
 
-                        ForEach(packets, id: \.id) { packet in
+                        ForEach(packets.prefix(3), id: \.id) { packet in
                             HStack {
                                 Text(packet.startDate, style: .time)
                                 Spacer()
@@ -37,7 +37,17 @@ struct HomeView: View {
                             .padding(.vertical, 4)
                             Divider()
                         }
+
+                        NavigationLink(destination: PacketView()) {
+                            Text("View All")
+                                .font(.headline)
+                                .frame(maxWidth: .infinity)
+                                .padding(.top, 4)
+                        }
                     }
+                    .padding()
+                    .background(.thinMaterial)
+                    .cornerRadius(12)
                 }
                 .padding()
             }

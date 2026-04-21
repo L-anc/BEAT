@@ -11,6 +11,7 @@ import SwiftData
 struct PersonalInfoView: View {
     
     @AppStorage("firstLaunch") var firstLaunch: Bool = true
+    @AppStorage("unitSystem") var unitSystem: UnitSystem = .metric
     
     // Pull demographics data from user defaults
     @State private var demographics = Demographics.current
@@ -32,6 +33,12 @@ struct PersonalInfoView: View {
                 Text("Necessary Info")
                     .font(.largeTitle)
                     .bold()
+                
+                Picker("Unit System", selection: $unitSystem) {
+                    ForEach(UnitSystem.allCases, id: \.self) { system in
+                        Text(system.rawValue).tag(system)
+                    }
+                }
                                 
                 HStack {
                     Text("Age")
@@ -52,32 +59,6 @@ struct PersonalInfoView: View {
                             .tag(sex)
                     }
                 }
-                
-//                HStack {
-//                    Text("Height (cm)")
-//                    Spacer()
-//                    
-//                    TextField(
-//                        "170",
-//                        value: $demographics.heightCm,
-//                        format: .number.precision(.fractionLength(0))
-//                    )
-//                    .keyboardType(.decimalPad)
-//                    .multilineTextAlignment(.trailing)
-//                }
-//                
-//                HStack {
-//                    Text("Weight (kg)")
-//                    Spacer()
-//                    
-//                    TextField(
-//                        "70",
-//                        value: $demographics.weightKg,
-//                        format: .number.precision(.fractionLength(0))
-//                    )
-//                    .keyboardType(.decimalPad)
-//                    .multilineTextAlignment(.trailing)
-//                }
                 
                 HStack {
                     Text("Height (cm)")

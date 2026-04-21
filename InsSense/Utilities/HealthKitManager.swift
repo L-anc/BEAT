@@ -147,7 +147,6 @@ class HealthKitManager: ObservableObject {
     // Fetches quantity samples within a date range
     private func fetchQuantitySamples(
         for identifier: HKQuantityTypeIdentifier,
-        unit: HKUnit,
         from start: Date,
         to end: Date
     ) async throws -> [HKDataPoint] {
@@ -161,7 +160,7 @@ class HealthKitManager: ObservableObject {
                     continuation.resume(throwing: error)
                     return
                 }
-                let values = (samples as? [HKQuantitySample])?.map {HKDataPoint(timestamp: $0.startDate, value: $0.quantity.doubleValue(for: unit))} ?? []
+                let values = (samples as? [HKQuantitySample])?.map {HKDataPoint(sample: $0)} ?? []
                 continuation.resume(returning: values)
             }
             store.execute(query)
@@ -192,21 +191,7 @@ class HealthKitManager: ObservableObject {
                     return
                 }
                 
-                let results = (samples as? [HKCategorySample])?.map { sample -> SleepDataPoint in
-                    let stage: String
-                    switch HKCategoryValueSleepAnalysis(rawValue: sample.value) {
-                        case .asleepCore: stage = "core"
-                        case .asleepDeep: stage = "deep"
-                        case .asleepREM: stage = "rem"
-                        case .awake: stage = "awake"
-                        default: stage = "unknown"
-                    }
-                    return SleepDataPoint(
-                        timestamp: sample.startDate,
-                        stage: stage,
-                        duration: sample.endDate.timeIntervalSince(sample.startDate)
-                    )
-                } ?? []
+                let results = (samples as? [HKCategorySample])?.map {SleepDataPoint(sample: $0)} ?? []
                 
                 continuation.resume(returning: results)
             }
@@ -227,16 +212,7 @@ class HealthKitManager: ObservableObject {
                     return
                 }
                 
-                let results = (samples as? [HKWorkout])?.map { workout -> WorkoutDataPoint in
-                    WorkoutDataPoint(
-                        timestamp: workout.startDate,
-                        type: workout.workoutActivityType.name,
-                        duration: workout.duration,
-                        energy: workout.statistics(for: HKQuantityType(.activeEnergyBurned))?
-                            .sumQuantity()?
-                            .doubleValue(for: .kilocalorie()) ?? 0
-                    )
-                } ?? []
+                let results = (samples as? [HKWorkout])?.map {WorkoutDataPoint(sample: $0)} ?? []
                 
                 continuation.resume(returning: results)
             }
@@ -339,18 +315,16 @@ class HealthKitManager: ObservableObject {
     
     // MARK: - Packet Builder
     
-    private func buildPacket(from start: Date, to end: Date) async throws -> DataPacket {
-        let bpmUnit = HKUnit.count().unitDivided(by: .minute())
-        
-        async let heartRate = try? fetchQuantitySamples(for: .heartRate, unit: bpmUnit, from: start, to: end)
-        async let hrv = try? fetchQuantitySamples(for: .heartRateVariabilitySDNN, unit: .secondUnit(with: .milli), from: start, to: end)
-        async let energy = try? fetchQuantitySamples(for: .activeEnergyBurned, unit: .kilocalorie(), from: start, to: end)
-        async let exercise = try? fetchQuantitySamples(for: .appleExerciseTime, unit: .minute(), from: start, to: end)
-        async let bodyTemp = try? fetchQuantitySamples(for: .bodyTemperature, unit: .degreeCelsius(), from: start, to: end)
-        async let wristTemp = try? fetchQuantitySamples(for: .appleSleepingWristTemperature, unit: .degreeCelsius(), from: start, to: end)
-        async let respiratory = try? fetchQuantitySamples(for: .respiratoryRate, unit: bpmUnit, from: start, to: end)
-        async let glucose = try? fetchQuantitySamples(for: .bloodGlucose, unit: .moleUnit(with: .milli, molarMass: HKUnitMolarMassBloodGlucose).unitDivided(by: .liter()), from: start, to: end)
-        async let insulin = try? fetchQuantitySamples(for: .insulinDelivery, unit: .internationalUnit(), from: start, to: end)
+    private func buildPacket(from start: Date, to end: Date) async throws -> DataPacket {    
+        async let heartRate = try? fetchQuantitySamples(for: .heartRate, from: start, to: end)
+        async let hrv = try? fetchQuantitySamples(for: .heartRateVariabilitySDNN, from: start, to: end)
+        async let energy = try? fetchQuantitySamples(for: .activeEnergyBurned, from: start, to: end)
+        async let exercise = try? fetchQuantitySamples(for: .appleExerciseTime, from: start, to: end)
+        async let bodyTemp = try? fetchQuantitySamples(for: .bodyTemperature, from: start, to: end)
+        async let wristTemp = try? fetchQuantitySamples(for: .appleSleepingWristTemperature, from: start, to: end)
+        async let respiratory = try? fetchQuantitySamples(for: .respiratoryRate, from: start, to: end)
+        async let glucose = try? fetchQuantitySamples(for: .bloodGlucose, from: start, to: end)
+        async let insulin = try? fetchQuantitySamples(for: .insulinDelivery, from: start, to: end)
         async let sleep = try? fetchSleepSamples(from: start, to: end)
         async let workouts = try? fetchWorkouts(from: start, to: end)
 

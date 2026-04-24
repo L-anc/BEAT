@@ -1,4 +1,5 @@
 import Foundation
+import HealthKit
 
 extension DataPacket {
     static var sampleData: [DataPacket] {[
@@ -64,7 +65,7 @@ extension DataPacket {
             workoutSamples: [
                 WorkoutDataPoint(
                     timestamp: Date(timeIntervalSince1970: 2000),
-                    type: "Running",
+                    type: .running,
                     duration: 300,
                     energy: 280
                 )

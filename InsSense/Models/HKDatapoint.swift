@@ -12,17 +12,18 @@ import HealthKit
 // Works for standard non-exercise, non-sleep readings
 struct HKDataPoint: Codable {
     let timestamp: Date
-    let value: Double
-    let unitString: String  // Uses standard SI units
+    let value: Double // The datapoint value in standard SI units
+    let identifier: String // Identifies the type of HealthKit data, necessary for unit conversions
+    let unitString: String  // The SI units of the datapoint
     
     // Initialize
     init(sample: HKQuantitySample) {
         self.timestamp = sample.startDate
-        self.unitString = sample.quantityType.identifier
         
         // Handle getting the SI value from the HKQuantitySample
-        let identifier = HKQuantityTypeIdentifier(rawValue: unitString)
+        self.identifier = sample.quantityType.identifier
         let unit = HKDataPoint.siUnit(for: identifier)
+        self.unitString = unit.unitString
         self.value = sample.quantity.doubleValue(for: unit)
     }
     
@@ -32,6 +33,7 @@ struct HKDataPoint: Codable {
         self.timestamp = timestamp
         self.value = value
         self.unitString = ""
+        self.identifier = ""
     }
     #endif
     
@@ -45,8 +47,18 @@ struct HKDataPoint: Codable {
         quantity.doubleValue(for: unit)
     }
     
+    // Return the double value in user preferred units
     func preferredDoubleValue() -> Double {
-        doubleValue(for: HKUnit(from: self.unitString))
+        guard let unitSystem = UserDefaults.standard.string(forKey: "unitSystem")
+        else { return self.value} // Default to SI value when no preference is set
+        
+        if unitSystem == "metric"{
+            return self.value
+        }
+        
+        // Convert to metric
+        let unit = HKDataPoint.imperialUnit(for: self.identifier)
+        return doubleValue(for: unit)
     }
 }
 
@@ -87,6 +99,7 @@ struct WorkoutDataPoint: Codable {
     let type: String
     let duration: Double
     let energy: Double
+    let systemImage: String
     
     init(sample: HKWorkout) {
         self.timestamp = sample.startDate
@@ -95,15 +108,17 @@ struct WorkoutDataPoint: Codable {
         self.energy = sample.statistics(for: HKQuantityType(.activeEnergyBurned))?
             .sumQuantity()?
             .doubleValue(for: .kilocalorie()) ?? 0
+        self.systemImage = sample.workoutActivityType.systemImageName
     }
     
     #if DEBUG
     // Way to initialize WorkoutDataPoint for sample testing
-    init(timestamp: Date, type: String, duration: Double, energy: Double){
+    init(timestamp: Date, type: HKWorkoutActivityType, duration: Double, energy: Double){
         self.timestamp = timestamp
-        self.type = type
+        self.type = type.name
         self.duration = duration
         self.energy = energy
+        self.systemImage = type.systemImageName
     }
     #endif
 }

@@ -23,26 +23,30 @@ struct DetailView: View {
                         
                         DetailRow(labelText: "Predicted Status:", systemImage: packet.status.systemImage, summaryData: packet.status.rawValue)
                         
-                        DetailRow(labelText: "Heart Rate:", systemImage: "heart", summaryData: packet.heartRateSamples, operation: .Mean, unit: "bpm")
+                        DetailRow(labelText: "Heart Rate:", systemImage: "heart", summaryData: packet.heartRateSamples, operation: .Mean)
                         
-                        DetailRow(labelText: "Heart Rate Variation:", systemImage: "heart", summaryData: packet.hrvSamples, operation: .Mean, unit: "ms")
+                        DetailRow(labelText: "Heart Rate Variation:", systemImage: "heart", summaryData: packet.hrvSamples, operation: .Mean)
                         
-                        DetailRow(labelText: "Active Energy:", systemImage: "flame", summaryData: packet.activeEnergySamples, operation: .Sum, unit: "kCal")
+                        DetailRow(labelText: "Active Energy:", systemImage: "flame", summaryData: packet.activeEnergySamples, operation: .Sum)
                         
                         // Double check all units below this line
-                        DetailRow(labelText: "Exercise Time:", systemImage: "figure.run", summaryData: packet.exerciseTimeSamples, operation: .Sum, unit: "s")
+                        DetailRow(labelText: "Exercise Time:", systemImage: "figure.run", summaryData: packet.exerciseTimeSamples, operation: .Sum)
                         
-                        DetailRow(labelText: "Body Temperature", systemImage: "thermometer.medium", summaryData: packet.bodyTemperatureSamples, operation: .Mean, unit: "F")
+                        DetailRow(labelText: "Body Temperature", systemImage: "thermometer.medium", summaryData: packet.bodyTemperatureSamples, operation: .Mean)
                         
-                        DetailRow(labelText: "Wrist Temperature", systemImage: "thermometer.medium", summaryData: packet.wristTemperatureSamples, operation: .Mean, unit: "F")
+                        DetailRow(labelText: "Wrist Temperature", systemImage: "thermometer.medium", summaryData: packet.wristTemperatureSamples, operation: .Mean)
                         
-                        DetailRow(labelText: "Respiratory Rate", systemImage: "lungs", summaryData: packet.respiratoryRateSamples, operation: .Mean, unit: "ml")
+                        DetailRow(labelText: "Respiratory Rate", systemImage: "lungs", summaryData: packet.respiratoryRateSamples, operation: .Mean)
                         
-                        // Need to add new detailRow and DataPointList for workoutDataPoint and SleepDataPoint
+                        DetailRow(labelText: "Blood Glucose", systemImage: "fork.knife", summaryData: packet.bloodGlucoseSamples, operation: .Sum)
                         
-                        DetailRow(labelText: "Blood Glucose", systemImage: "fork.knife", summaryData: packet.bloodGlucoseSamples, operation: .Sum, unit: "ml")
+                        DetailRow(labelText: "Insulin", systemImage: "syringe", summaryData: packet.insulinSamples, operation: .Sum)
                         
-                        DetailRow(labelText: "Insulin", systemImage: "syringe", summaryData: packet.insulinSamples, operation: .Sum, unit: "ml")
+                        // MARK: - Sleep and Workout points
+                        SleepDetailRow(summaryData: packet.sleepSamples)
+                        
+                        WorkoutDetailRow(summaryData: packet.workoutSamples)
+                        
                     }
                 }
                 .navigationTitle(packet.id.uuidString)

@@ -108,8 +108,7 @@ class DataPacket {
     }
     
     var hasData: Bool {
-        [heartRateData, hrvData, activeEnergyData, bloodGlucoseData]
-            .contains { $0 != nil }
+        return [heartRateData, hrvData, activeEnergyData, bloodGlucoseData].contains { $0 != nil }
     }
     
     func updateStatus(_ newStatus: PredictedStatus) {

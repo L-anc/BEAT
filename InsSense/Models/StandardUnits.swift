@@ -43,9 +43,18 @@ extension HKDataPoint {
         case .appleExerciseTime:                     return .minute()
         case .bodyTemperature,
              .appleSleepingWristTemperature:         return .degreeCelsius()
-        case .bloodGlucose:                          return .moleUnit(with: .milli, molarMass:          HKUnitMolarMassBloodGlucose).unitDivided(by: .liter())
+        case .bloodGlucose:                          return .moleUnit(with: .milli, molarMass: HKUnitMolarMassBloodGlucose).unitDivided(by: .liter())
         case .insulinDelivery:                       return .internationalUnit()
         default:                                     return .count()
         }
+    }
+    
+    // MARK: - String overloads so we dont have to do funky conversions in HKDatapoint
+    static func siUnit(for identifier: String) -> HKUnit {
+        siUnit(for: HKQuantityTypeIdentifier(rawValue: identifier))
+    }
+    
+    static func imperialUnit(for identifier: String) -> HKUnit {
+        imperialUnit(for: HKQuantityTypeIdentifier(rawValue: identifier))
     }
 }

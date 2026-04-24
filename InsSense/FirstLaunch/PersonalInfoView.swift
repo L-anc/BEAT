@@ -63,7 +63,7 @@ struct PersonalInfoView: View {
                 HStack {
                     Text("Height (cm)")
                     Spacer()
-                    TextField("170", text: $heightText)
+                     TextField("170", text: $heightText)
                         .keyboardType(.numberPad)
                         .multilineTextAlignment(.trailing)
                         .focused($focusedField, equals: .height)
@@ -88,15 +88,6 @@ struct PersonalInfoView: View {
                 
             }
             .scrollDismissesKeyboard(.interactively)
-//            .toolbar {
-//                ToolbarItemGroup(placement: .keyboard) {
-//                    Spacer()
-//                    Button("Done") {
-//                        focusedField = nil
-//                    }
-//                }
-//                .padding(.bottom, 8)
-//            }
             .safeAreaInset(edge: .bottom) {
                 if focusedField != nil {
                     HStack {

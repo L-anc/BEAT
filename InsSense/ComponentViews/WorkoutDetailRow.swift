@@ -1,40 +1,41 @@
 //
-//  DetailRow.swift
+//  WorkoutDetailRow.swift
 //  InsSense
 //
-//  Created by Controllab on 4/18/26.
+//  Created by Controllab on 4/24/26.
+//
+
+//
+//  SleepDetailRow.swift
+//  InsSense
+//
+//  Created by Controllab on 4/24/26.
 //
 
 import SwiftUI
 
-struct DetailRow: View {
-    let labelText: String
-    let systemImage: String
+
+struct WorkoutDetailRow: View {
+    let labelText = "Workouts:"
+    let systemImage = "figure.run"
     let summaryData: String
-    let dataPoints: [HKDataPoint]
+    let dataPoints: [WorkoutDataPoint]
+    let unit = "min"
     
     //MARK: - Overloads
     
     // Double optional with summaryData dependent NavLink
-    init(labelText: String, systemImage: String, summaryData: [HKDataPoint]?, operation: ArrayDisplay) {
-        self.labelText = labelText
-        self.systemImage = systemImage
-                
+    init(summaryData: [WorkoutDataPoint]?) {
         // Catch case where summaryData is nil
         if let data = summaryData {
             var dataSummary: Double?
             
-            switch operation {
-            case .Sum:
-                dataSummary = data.preferredSum
-            case .Mean:
-                dataSummary = data.preferredMean
-            }
+            dataSummary = data.sum
             
             // Unwrap data Summary. There should only be non N/A text if dataSummary returns non nil val
             if let dataSummary {
+                self.summaryData = "\(Int(dataSummary)) \(unit)"
                 self.dataPoints = data
-                self.summaryData = "\(Int(dataSummary)) \(dataPoints[0].unitString)"
             } else {
                 self.summaryData = "N/A"
                 self.dataPoints = []
@@ -46,15 +47,6 @@ struct DetailRow: View {
         }
     }
     
-    
-    // Date
-    init(labelText: String, systemImage: String, summaryData: String) {
-        self.labelText = labelText
-        self.systemImage = systemImage
-        self.summaryData = summaryData
-        self.dataPoints = []
-    }
-    
     var body: some View {
         if dataPoints.isEmpty {
             HStack {
@@ -64,7 +56,7 @@ struct DetailRow: View {
             }
             .accessibilityElement(children: .combine)
         } else {
-            NavigationLink(destination: DataPointListView(title: labelText, systemImage: systemImage, dataPoints: dataPoints)){
+            NavigationLink(destination: WorkoutDataPointListView(dataPoints: dataPoints)){
                 HStack {
                     Label(labelText, systemImage: systemImage)
                     Spacer()
@@ -77,5 +69,5 @@ struct DetailRow: View {
 }
 
 #Preview {
-    DetailRow(labelText: "Avg Heart Rate Variation:", systemImage: "heart", summaryData: DataPacket.sampleDecodedPacket.hrvSamples, operation: .Mean)
+    SleepDetailRow(summaryData: DataPacket.sampleDecodedPacket.sleepSamples)
 }

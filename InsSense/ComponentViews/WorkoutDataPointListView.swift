@@ -1,16 +1,17 @@
 //
-//  DataPointListView.swift
+//  WorkoutDataPointListView.swift
 //  InsSense
 //
-//  Created by Controllab on 4/17/26.
+//  Created by Controllab on 4/24/26.
 //
 
 import SwiftUI
 
-struct DataPointListView: View {
-    let title: String
-    let systemImage: String
-    let dataPoints: [HKDataPoint]
+struct WorkoutDataPointListView: View {
+    let title = "Workout Samples"
+    let systemImage = "figure.run"
+    let unit = "min"
+    let dataPoints: [WorkoutDataPoint]
     
     var body: some View {
         if dataPoints.isEmpty {
@@ -18,7 +19,7 @@ struct DataPointListView: View {
         } else {
             List(dataPoints, id: \.timestamp) { point in
                 HStack {
-                    Label("\(Int(point.preferredDoubleValue())) \(dataPoints[0].unitString)", systemImage: systemImage)
+                    Label("\(Int(point.duration/60))", systemImage: point.systemImage)
                     Spacer()
                     Text("\(point.timestamp.formatted(.dateTime.hour().minute()))")
                         .foregroundColor(.secondary)
@@ -32,9 +33,9 @@ struct DataPointListView: View {
 }
 
 #Preview {
-    if let hrSamples = DataPacket.sampleDecodedPacket.heartRateSamples {
-        DataPointListView(title: "Heart Rate Samples", systemImage: "heart", dataPoints: hrSamples)
+    if let workoutSamples = DataPacket.sampleDecodedPacket.workoutSamples {
+        WorkoutDataPointListView(dataPoints: workoutSamples)
     }else {
-        DataPointListView(title: "Heart Rate Samples", systemImage: "heart", dataPoints: [])
+        WorkoutDataPointListView(dataPoints: [])
     }
 }

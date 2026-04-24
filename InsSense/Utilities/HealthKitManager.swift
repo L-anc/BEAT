@@ -9,21 +9,6 @@ import HealthKit
 import Combine
 import SwiftData
 
-extension HKWorkoutActivityType {
-    var name: String {
-        switch self {
-        case .running: return "Running"
-        case .walking: return "Walking"
-        case .cycling: return "Cycling"
-        case .swimming: return "Swimming"
-        case .yoga: return "Yoga"
-        case .functionalStrengthTraining: return "Strength Training"
-        case .highIntensityIntervalTraining: return "HIIT"
-        default: return "Other"
-        }
-    }
-}
-
 class HealthKitManager: ObservableObject {
     let store = HKHealthStore() // Read only access to Apple Health Data
     private var observerQueries: [HKObserverQuery] = []
@@ -149,7 +134,7 @@ class HealthKitManager: ObservableObject {
         for identifier: HKQuantityTypeIdentifier,
         from start: Date,
         to end: Date
-    ) async throws -> [HKDataPoint] {
+    ) async throws -> [HKDataPoint]? {
         let type = HKQuantityType(identifier)
         let predicate = HKQuery.predicateForSamples(withStart: start, end: end)
         let sort = NSSortDescriptor(key: HKSampleSortIdentifierEndDate, ascending: true)
@@ -160,7 +145,7 @@ class HealthKitManager: ObservableObject {
                     continuation.resume(throwing: error)
                     return
                 }
-                let values = (samples as? [HKQuantitySample])?.map {HKDataPoint(sample: $0)} ?? []
+                let values = (samples as? [HKQuantitySample])?.map {HKDataPoint(sample: $0)} ?? nil
                 continuation.resume(returning: values)
             }
             store.execute(query)

@@ -24,8 +24,16 @@ class HealthKitManager: ObservableObject {
     //Stores date when health data was last synced as double of seconds since 1970
     private var lastFetchDate: Date {
             get {
-                let timestamp = UserDefaults.standard.double(forKey: "HKLastFetchDate")
+                var timestamp = UserDefaults.standard.double(forKey: "HKLastFetchDate")
                 // Default is 0 when HKLastFetchDate has not been set
+                if timestamp == 0 {
+                    #if DEBUG
+                    print("This should only happen once")
+                    print("UserDefault: \(timestamp)")
+                    #endif
+                    timestamp = Date.now.timeIntervalSince1970
+                    UserDefaults.standard.set(timestamp, forKey: "HKLastFetchDate")
+                }
                 return Date(timeIntervalSince1970: timestamp)
             }
             set {
@@ -248,12 +256,6 @@ class HealthKitManager: ObservableObject {
     }
     
     // MARK: - Sync Handling
-    
-    #if DEBUG
-    func forceSyncNow() async {
-        await handleSync()
-    }
-    #endif
     
     private func handleSync() async {
         let from = lastFetchDate

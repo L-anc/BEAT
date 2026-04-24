@@ -44,6 +44,7 @@ class DataPacket {
     var workoutData: Data?
     var bloodGlucoseData: Data?
     var insulinData: Data?
+    var hasData : Bool
     
     init(
         id: UUID = UUID(),
@@ -66,7 +67,32 @@ class DataPacket {
         self.startDate = startDate
         self.endDate = endDate
         self.status = status
+        self.hasData = false
         
+        // Check all parameters before encoding
+        let params: [[HKDataPoint]?] = [heartRateSamples, hrvSamples, activeEnergySamples, exerciseTimeSamples, bodyTemperatureSamples, wristTemperatureSamples, respiratoryRateSamples, bloodGlucoseSamples, insulinSamples]
+        
+        for param in params {
+            if let arr = param {
+                if !arr.isEmpty {
+                    self.hasData = true
+                    break
+                }
+            }
+        }
+        
+        if let arr = sleepSamples {
+            if !arr.isEmpty {
+                self.hasData = true
+            }
+        }
+        if let arr = workoutSamples {
+            if !arr.isEmpty {
+                self.hasData = true
+            }
+        }
+        
+        // Encode
         let encoder = JSONEncoder()
         self.heartRateData = try? encoder.encode(heartRateSamples)
         self.hrvData = try? encoder.encode(hrvSamples)
@@ -105,10 +131,6 @@ class DataPacket {
             bloodGlucoseSamples: try? decoder.decode([HKDataPoint].self, from: bloodGlucoseData ?? Data()),
             insulinSamples: try? decoder.decode([HKDataPoint].self, from: insulinData ?? Data())
         )
-    }
-    
-    var hasData: Bool {
-        return [heartRateData, hrvData, activeEnergyData, bloodGlucoseData].contains { $0 != nil }
     }
     
     func updateStatus(_ newStatus: PredictedStatus) {

@@ -110,7 +110,12 @@ class HealthKitManager: ObservableObject {
         ]
         
         for type in typesToObserve {
-            try await store.enableBackgroundDelivery(for: type, frequency: .immediate)
+            do {
+                try await store.enableBackgroundDelivery(for: type, frequency: .immediate)
+                print("Background delivery enabled for \(type.identifier)")
+            } catch {
+                print("Failed background delivery for \(type.identifier): \(error)")
+            }
         }
     }
     
@@ -217,29 +222,30 @@ class HealthKitManager: ObservableObject {
     // MARK: - Observer
     
     func startObserving() {
-        // Try using Heart Rate as the trigger first. Simpler, most important, highest freq signal
-//        let typesToObserve: [HKSampleType] = [
-//            HKQuantityType(.heartRate),
-//            HKQuantityType(.heartRateVariabilitySDNN),
-//            HKQuantityType(.activeEnergyBurned),
-//            HKQuantityType(.appleExerciseTime),
-//            HKQuantityType(.bodyTemperature),
-//            HKQuantityType(.appleSleepingWristTemperature),
-//            HKQuantityType(.respiratoryRate),
-//            HKQuantityType(.bloodGlucose),
-//            HKQuantityType(.insulinDelivery),
-//            HKCategoryType(.sleepAnalysis),
-//            HKWorkoutType.workoutType()
-//        ]
+        let typesToObserve: [HKSampleType] = [
+            HKQuantityType(.heartRate),
+            HKQuantityType(.heartRateVariabilitySDNN),
+            HKQuantityType(.activeEnergyBurned),
+            HKQuantityType(.appleExerciseTime),
+            HKQuantityType(.bodyTemperature),
+            HKQuantityType(.appleSleepingWristTemperature),
+            HKQuantityType(.respiratoryRate),
+            HKQuantityType(.bloodGlucose),
+            HKQuantityType(.insulinDelivery),
+            HKCategoryType(.sleepAnalysis),
+            HKWorkoutType.workoutType()
+        ]
+        #if DEBUG
+        print("observing at: \(Date.now)")
+        #endif
         
-        let trigger = HKQuantityType(.heartRate)
-            
+        for trigger in typesToObserve {
             let query = HKObserverQuery(sampleType: trigger, predicate: nil) { [weak self] _, completionHandler, error in
                 guard error == nil else {
                     completionHandler()
                     return
                 }
-                
+                print("Observer fired for \(trigger.identifier)")
                 Task {
                     await self?.handleSync()
                     completionHandler()
@@ -249,6 +255,7 @@ class HealthKitManager: ObservableObject {
             store.execute(query)
             observerQueries.append(query)
         }
+    }
     
     func stopObserving() {
         observerQueries.forEach { store.stop($0) }
@@ -257,7 +264,21 @@ class HealthKitManager: ObservableObject {
     
     // MARK: - Sync Handling
     
-    private func handleSync() async {
+    private var syncTask: Task<Void, Never>?
+    
+    // Debounce sync wrapper to prevent duplicate packet creation from multiple simultaneous
+    // observer firings
+    func handleSync() async {
+        syncTask?.cancel()
+        syncTask = Task {
+            try? await Task.sleep(nanoseconds: 2_000_000_000) //2 second debounce
+            guard !Task.isCancelled else { return }
+            await performSync()
+        }
+        await syncTask?.value
+    }
+    
+    private func performSync() async {
         let from = lastFetchDate
         #if DEBUG
         print("========================================")

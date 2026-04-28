@@ -131,7 +131,7 @@ class DataPacket {
             bloodGlucoseSamples: try? decoder.decode([HKDataPoint].self, from: bloodGlucoseData ?? Data()),
             insulinSamples: try? decoder.decode([HKDataPoint].self, from: insulinData ?? Data())
         )
-    }
+    }	
     
     func updateStatus(_ newStatus: PredictedStatus) {
         self.status = newStatus

@@ -21,7 +21,8 @@ struct DetailView: View {
                         
                         DetailRow(labelText: "Sample Time:", systemImage: "clock", summaryData: "\(packet.startDate.formatted(.dateTime.hour().minute())) - \(packet.endDate.formatted(.dateTime.hour().minute()))")
                         
-                        DetailRow(labelText: "Predicted Status:", systemImage: packet.status.systemImage, summaryData: packet.status.rawValue)
+                        // Only worth including when model is online
+//                        DetailRow(labelText: "Predicted Status:", systemImage: packet.status.systemImage, summaryData: packet.status.rawValue)
                         
                         DetailRow(labelText: "Heart Rate:", systemImage: "heart", summaryData: packet.heartRateSamples, operation: .Mean)
                         

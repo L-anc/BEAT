@@ -18,7 +18,7 @@ struct TimeSeriesChart: View {
             Text(title)
                 .font(.headline)
 
-            Chart(data, id: \.timestamp) { point in
+            Chart(data.sorted { $0.timestamp < $1.timestamp }, id: \.timestamp) { point in
                 LineMark(
                     x: .value("Time", point.timestamp),
                     y: .value(yAxisLabel, point.value)

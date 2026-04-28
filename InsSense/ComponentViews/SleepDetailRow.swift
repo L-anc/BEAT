@@ -30,25 +30,18 @@ struct SleepDetailRow: View {
                 self.summaryData = "\(Int(dataSummary/60)) \(unit)" // Divide by 60 because duration is in sec
                 self.dataPoints = data
             } else {
-                self.summaryData = "N/A"
+                self.summaryData = ""
                 self.dataPoints = []
             }
             
         } else {
-            self.summaryData = "N/A"
+            self.summaryData = ""
             self.dataPoints = []
         }
     }
     
     var body: some View {
-        if dataPoints.isEmpty {
-            HStack {
-                Label(labelText, systemImage: systemImage)
-                Spacer()
-                Text(summaryData)
-            }
-            .accessibilityElement(children: .combine)
-        } else {
+        if !dataPoints.isEmpty {
             NavigationLink(destination: SleepPieChartView(dataPoints: dataPoints)){
                 HStack {
                     Label(labelText, systemImage: systemImage)

@@ -36,12 +36,12 @@ struct DetailRow: View {
                 self.dataPoints = data
                 self.summaryData = "\(Int(dataSummary)) \(dataPoints[0].unitString)"
             } else {
-                self.summaryData = "N/A"
+                self.summaryData = ""
                 self.dataPoints = []
             }
             
         } else {
-            self.summaryData = "N/A"
+            self.summaryData = ""
             self.dataPoints = []
         }
     }
@@ -57,12 +57,14 @@ struct DetailRow: View {
     
     var body: some View {
         if dataPoints.isEmpty {
-            HStack {
-                Label(labelText, systemImage: systemImage)
-                Spacer()
-                Text(summaryData)
+            if summaryData != "" {
+                HStack {
+                    Label(labelText, systemImage: systemImage)
+                    Spacer()
+                    Text(summaryData)
+                }
+                .accessibilityElement(children: .combine)
             }
-            .accessibilityElement(children: .combine)
         } else {
             NavigationLink(destination: DataPointListView(title: labelText, systemImage: systemImage, dataPoints: dataPoints)){
                 HStack {

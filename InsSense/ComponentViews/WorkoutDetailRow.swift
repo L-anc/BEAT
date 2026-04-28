@@ -37,25 +37,18 @@ struct WorkoutDetailRow: View {
                 self.summaryData = "\(Int(dataSummary)) \(unit)"
                 self.dataPoints = data
             } else {
-                self.summaryData = "N/A"
+                self.summaryData = ""
                 self.dataPoints = []
             }
             
         } else {
-            self.summaryData = "N/A"
+            self.summaryData = ""
             self.dataPoints = []
         }
     }
     
     var body: some View {
-        if dataPoints.isEmpty {
-            HStack {
-                Label(labelText, systemImage: systemImage)
-                Spacer()
-                Text(summaryData)
-            }
-            .accessibilityElement(children: .combine)
-        } else {
+        if !dataPoints.isEmpty {
             NavigationLink(destination: WorkoutDataPointListView(dataPoints: dataPoints)){
                 HStack {
                     Label(labelText, systemImage: systemImage)

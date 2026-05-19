@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 
 @main
-struct InsSenseApp: App {
+struct BEATApp: App {
     @State private var container: ModelContainer
     @State private var packetStore: PacketStore
     @State private var healthKitManager: HealthKitManager

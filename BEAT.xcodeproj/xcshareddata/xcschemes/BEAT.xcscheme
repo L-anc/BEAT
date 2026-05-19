@@ -16,9 +16,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C98049C52F790C1900CF340A"
-               BuildableName = "InsSense.app"
-               BlueprintName = "InsSense"
-               ReferencedContainer = "container:InsSense.xcodeproj">
+               BuildableName = "BEAT.app"
+               BlueprintName = "BEAT"
+               ReferencedContainer = "container:BEAT.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -45,9 +45,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C98049C52F790C1900CF340A"
-            BuildableName = "InsSense.app"
-            BlueprintName = "InsSense"
-            ReferencedContainer = "container:InsSense.xcodeproj">
+            BuildableName = "BEAT.app"
+            BlueprintName = "BEAT"
+            ReferencedContainer = "container:BEAT.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -62,9 +62,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "C98049C52F790C1900CF340A"
-            BuildableName = "InsSense.app"
-            BlueprintName = "InsSense"
-            ReferencedContainer = "container:InsSense.xcodeproj">
+            BuildableName = "BEAT.app"
+            BlueprintName = "BEAT"
+            ReferencedContainer = "container:BEAT.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

@@ -4,6 +4,7 @@
 //
 //  Created by Controllab on 5/13/26.
 //
+import Foundation
 
 struct AccelDataPoint: Codable {
     let timestamp: Date

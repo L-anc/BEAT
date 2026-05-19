@@ -34,8 +34,17 @@ struct WorkoutDetailRow: View {
             
             // Unwrap data Summary. There should only be non N/A text if dataSummary returns non nil val
             if let dataSummary {
-                self.summaryData = "\(Int(dataSummary)) \(unit)"
-                self.dataPoints = data
+                let mins = Int(dataSummary)
+                
+                // Display workouts longer than an hour in hours
+                if mins >= 60 {
+                    let hrs = Double(mins/60)
+                    self.summaryData = "\(hrs.formatted(.number.precision(.fractionLength(2)))) hrs"
+                    self.dataPoints = data
+                } else {
+                    self.summaryData = "\(Int(dataSummary)) \(unit)"
+                    self.dataPoints = data
+                }
             } else {
                 self.summaryData = ""
                 self.dataPoints = []

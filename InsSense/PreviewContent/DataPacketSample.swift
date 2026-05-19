@@ -28,7 +28,14 @@ extension DataPacket {
             wristTemperatureSamples: nil,
             respiratoryRateSamples: nil,
             sleepSamples: nil,
-            workoutSamples: nil,
+            workoutSamples: [
+                WorkoutDataPoint(
+                    timestamp: Date(timeIntervalSince1970: 2000),
+                    type: .running,
+                    duration: 300,
+                    energy: 280
+                )
+            ],
             bloodGlucoseSamples: [
                 HKDataPoint(timestamp: Date(timeIntervalSince1970: 1000), value: 5.2),
                 HKDataPoint(timestamp: Date(timeIntervalSince1970: 1150), value: 5.4),

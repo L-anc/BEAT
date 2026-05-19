@@ -1,6 +1,6 @@
 //
 //  RootView.swift
-//  InsSense
+//  BEAT
 //
 //  Created by Controllab on 4/2/26.
 //

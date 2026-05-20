@@ -1,6 +1,6 @@
 //
-//  InsSenseApp.swift
-//  InsSense
+//  BEATApp.swift
+//  BEAT
 //
 //  Created by Controllab on 3/29/26.
 //

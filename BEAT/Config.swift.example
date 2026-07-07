@@ -1,0 +1,27 @@
+//
+//  Config.swift.example
+//  BEAT
+//
+//  Template for the untracked per-environment config. To set up after a
+//  fresh clone:
+//      cp BEAT/Config.swift.example BEAT/Config.swift
+//  then fill in the real endpoint(s) and API key. Config.swift is
+//  gitignored so environment addresses and keys never enter git history.
+//
+//  nonisolated: the project defaults declarations to @MainActor, but these
+//  are read from the PacketUploader actor off the main thread.
+//
+
+import Foundation
+
+#if DEBUG
+// Local dev: the Docker stack in server/ (see server/docker-compose.yml),
+// reached via the Mac's LAN IP so physical devices work too
+nonisolated let UploadEndpoint = URL(string: "http://YOUR-MAC-LAN-IP:3000/api/packets")!
+#else
+// Production: the lab server
+nonisolated let UploadEndpoint = URL(string: "http://LAB-SERVER-ADDRESS/api/packets")!
+#endif
+
+// Set to the lab server's key, or nil if the server doesn't require one
+nonisolated let UploadAPIKey: String? = nil

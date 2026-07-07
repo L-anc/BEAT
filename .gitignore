@@ -1,0 +1,5 @@
+# Per-environment app config (copy from BEAT/Config.swift.example)
+BEAT/Config.swift
+
+# Local dev server stack
+server

@@ -15,7 +15,8 @@ class HealthKitManager: ObservableObject {
     private var context: ModelContext // Full access to app database
     
     private var packetStore: PacketStore // The packetStore abstraction
-        
+    private let uploader = PacketUploader() // Ships packets to the MongoDB backend
+
     init(context: ModelContext, packetStore: PacketStore) {
         self.context = context
         self.packetStore = packetStore
@@ -305,10 +306,14 @@ class HealthKitManager: ObservableObject {
             #endif
             
             let summary = PacketSummary(from: packet)
-            
+
             // Link summary to packet to enable cascade insert/delete
             packet.summary = summary
-            
+
+            // Snapshot before handing the packet to SwiftData so the upload
+            // doesn't touch the model off the main actor
+            let decoded = packet.decoded()
+
             await MainActor.run {
                 // insert into SwiftData context
                 print("New packet built: \(packet.startDate) → \(packet.endDate)")
@@ -316,6 +321,9 @@ class HealthKitManager: ObservableObject {
                 // Trim expired packets (3 hr window) from SwiftData
                 try? packetStore.deleteExpiredPackets()
             }
+
+            // Ship to MongoDB backend; failures queue and retry on next sync
+            await uploader.upload(decoded)
         } catch {
             print("Sync failed: \(error)")
         }

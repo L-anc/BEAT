@@ -193,4 +193,4 @@ BEAT/
 
 ---
 
-*This document should live alongside the code (e.g. as `NOTES.md` in the repo root) and be updated as a running log rather than rewritten from scratch.*
+*This document should live alongside the code (e.g. as `README.md` in the repo root) and be updated as a running log rather than rewritten from scratch.*
